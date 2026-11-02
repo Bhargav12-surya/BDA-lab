@@ -10,11 +10,15 @@ Open a terminal in the folder containing `DiabetesPrediction.scala` and `diabete
 scala-cli run DiabetesPrediction.scala
 ```
 
-The Scala file declares the Spark dependencies. The program prints the missing-value counts, model comparison and predictions for three fictional examples. The saved run is in [Spark output.txt](Spark%20output.txt).
+The Scala file declares the Scala (`2.13.18`) and Spark MLlib (`4.3.0`) dependencies. The program prints the missing-value counts, model comparison and predictions for three fictional examples. The saved run is in [Spark output.txt](Spark%20output.txt).
 
-## Data and results
+## Data and pipeline
 
-I added a header to the [original CSV](https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv). In this dataset, a pregnancy count of zero is valid. I treated zero glucose, blood pressure, skin thickness, insulin and BMI readings as missing. Insulin had the most missing readings, 374 out of 768. I used the training records to calculate the replacement medians and fit the scaler.
+I added a header to the [original CSV](https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv) (see [field definitions](https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.names)). In this dataset, a pregnancy count of zero is valid. I treated zero glucose, blood pressure, skin thickness, insulin and BMI readings as missing. Insulin had the most missing readings, 374 out of 768.
+
+Records are split deterministically (60/20/20) by `xxhash64` over the eight input features so identical feature rows stay in the same split. Each classifier runs in a Spark ML `Pipeline` (`SQLTransformer` cleaning, median `Imputer`, `VectorAssembler`, `StandardScaler`, and classifier), with the imputer and scaler fitted on the training records only.
+
+## Results
 
 The split gave 447 training records, 150 validation records and 171 test records. I chose the random forest because it had the highest validation F1 score (0.6875). These are the results on the test records, with diabetes as the positive class.
 
