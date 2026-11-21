@@ -10,7 +10,7 @@ These are my three Big Data Analytics lab assignments. I used Scala and Apache S
 
 ## Running the assignments
 
-I used JDK 21, Scala CLI and Spark 4.3.0. Run one command at a time from the repository root. Scala CLI reads the dependency versions from each source file.
+I used JDK 21, Scala `2.13.18`, Scala CLI and Spark `4.3.0` (`spark-core`, `spark-sql`, and `spark-mllib`). Run one command at a time from the repository root. Scala CLI reads the dependency versions from each source file, and each assignment folder also includes a saved `Spark output.txt`.
 
 ```sh
 scala-cli run "Assignment 1/StudentPerformanceAnalysis.scala"
@@ -18,7 +18,7 @@ scala-cli run "Assignment 2/SalesAnalysis.scala"
 scala-cli run "Assignment 3/DiabetesPrediction.scala"
 ```
 
-To inspect the sales query yourself, run `scala-cli run "Assignment 2/SalesAnalysis.scala" -- --keep-ui`. Open the Spark UI address printed in the terminal. Press Enter when you finish.
+To inspect the sales query yourself, run `scala-cli run "Assignment 2/SalesAnalysis.scala" -- --keep-ui` (or pass a custom CSV path first with `-- path/to/sales.csv --keep-ui`). Open the Spark UI address printed in the terminal. Press Enter when you finish.
 
 ## Datasets
 
