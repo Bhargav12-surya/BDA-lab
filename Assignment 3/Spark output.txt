@@ -1,0 +1,50 @@
+Dataset: 768 records. Missing or invalid outcomes excluded: 0
+Inputs: Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age. Target: Outcome (0 = negative, 1 = positive).
+
+Missing or invalid feature values before median imputation
++-----------+-------+-------------+-------------+-------+---+------------------------+---+
+|Pregnancies|Glucose|BloodPressure|SkinThickness|Insulin|BMI|DiabetesPedigreeFunction|Age|
++-----------+-------+-------------+-------------+-------+---+------------------------+---+
+|0          |5      |35           |227          |374    |11 |0                       |0  |
++-----------+-------+-------------+-------------+-------+---+------------------------+---+
+
+Actual split sizes and class counts (target proportions 60/20/20)
++----------+----+--------+--------+
+|split     |rows|negative|positive|
++----------+----+--------+--------+
+|test      |171 |103     |68      |
+|train     |447 |291     |156     |
+|validation|150 |106     |44      |
++----------+----+--------+--------+
+
+I fitted the median imputer and the standard scaler on the training rows only. The pipeline fills missing values, assembles the eight inputs into a vector, scales it and passes it to the classifier.
+
+Validation comparison (positive class = 1)
+Model                  Accuracy  Precision  Recall     F1    TP   TN   FP   FN
+Logistic regression      0.8133     0.7222  0.5909  0.6500   26   96   10   18
+Decision tree            0.7533     0.5686  0.6591  0.6105   29   84   22   15
+Random forest            0.8000     0.6346  0.7500  0.6875   33   87   19   11
+Selected model: Random forest (validation F1 0.6875, with recall as the tie-breaker).
+
+Held-out test comparison (positive class = 1)
+Model                  Accuracy  Precision  Recall     F1    TP   TN   FP   FN
+Logistic regression      0.7602     0.7872  0.5441  0.6435   37   93   10   31
+Decision tree            0.7368     0.6949  0.6029  0.6457   41   85   18   27
+Random forest            0.7661     0.7414  0.6324  0.6825   43   88   15   25
+Highest test F1 on this split: Random forest.
+On the test set, Random forest identified 43 of 68 positive records and marked 15 of 103 negative records as positive.
+
+Fictional new records scored by Random forest (Example C has missing insulin)
++---------+-----------+-------+-------------+-------------+-------+----+------------------------+----+--------------+---------------+
+|id       |Pregnancies|Glucose|BloodPressure|SkinThickness|Insulin|BMI |DiabetesPedigreeFunction|Age |positive_score|predicted_class|
++---------+-----------+-------+-------------+-------------+-------+----+------------------------+----+--------------+---------------+
+|Example A|1.0        |88.0   |66.0         |22.0         |70.0   |23.5|0.25                    |25.0|0.0444        |negative       |
+|Example B|6.0        |174.0  |86.0         |36.0         |150.0  |38.2|0.7                     |51.0|0.7701        |positive       |
+|Example C|2.0        |124.0  |74.0         |28.0         |0.0    |30.1|0.44                    |34.0|0.4768        |negative       |
++---------+-----------+-------+-------------+-------------+-------+----+------------------------+----+--------------+---------------+
+
+The score is the model output for class 1. The original dataset covers adult women of Pima heritage, so these results describe performance within that sample.
+
+How Spark shares the work
+Spark runs transformations on partitions. Logistic regression combines gradient summaries from the partitions. Tree models combine statistics to choose splits. The driver coordinates training, and executors can score different rows in parallel.
+Spark master for this run: local[2]

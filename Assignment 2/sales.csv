@@ -1,0 +1,29 @@
+transaction_id,product_name,category,store_location,quantity_sold,unit_price,transaction_date
+T001,Laptop,Electronics,Kochi,1,58500.00,2026-09-01
+T002,Notebook,Stationery,Chennai,25,48.50,2026-09-01
+T003,Office Chair,Furniture,Coimbatore,2,5000.00,2026-09-02
+T004,Wireless Mouse,Electronics,Bengaluru,8,650.00,2026-09-02
+T005,Water Bottle,Home and Kitchen,Kochi,10,325.50,2026-09-03
+T006,Desk Lamp,Home and Kitchen,Chennai,4,950.00,2026-09-03
+T007,Backpack,Accessories,Bengaluru,6,1200.00,2026-09-04
+T008,Notebook,Stationery,Coimbatore,32,48.50,2026-09-04
+T009,Office Chair,Furniture,Kochi,3,5000.00,2026-09-05
+T010,USB Cable,Accessories,Chennai,18,199.99,2026-09-05
+T011,Monitor,Electronics,Bengaluru,2,11500.00,2026-09-06
+T012,Water Bottle,Home and Kitchen,Coimbatore,14,325.50,2026-09-06
+T013,Wireless Mouse,Electronics,Chennai,12,650.00,2026-09-07
+T014,Desk,Furniture,Coimbatore,2,7500.00,2026-09-07
+T015,USB Cable,Accessories,Kochi,22,199.99,2026-09-08
+T016,Backpack,Accessories,Chennai,9,1200.00,2026-09-08
+T017,Notebook,Stationery,Bengaluru,30,48.50,2026-09-09
+T018,Desk Lamp,Home and Kitchen,Kochi,5,950.00,2026-09-09
+T019,Monitor,Electronics,Coimbatore,1,11500.00,2026-09-10
+T020,Office Chair,Furniture,Bengaluru,1,4800.00,2026-09-10
+T021,Water Bottle,Home and Kitchen,Chennai,8,325.50,2026-09-11
+T022,USB Cable,Accessories,Coimbatore,12,199.99,2026-09-11
+T023,Desk,Furniture,Kochi,1,7500.00,2026-09-12
+T024,Notebook,Stationery,Kochi,15,48.50,2026-09-12
+T025,,Stationery,Kochi,2,48.50,2026-09-13
+T026,Desk Lamp,Home and Kitchen,Chennai,-2,950.00,2026-09-13
+T027,Wireless Mouse,Electronics,Bengaluru,4,oops,2026-09-14
+T028,Water Bottle,Home and Kitchen,Coimbatore,6,325.50,2026-09-31

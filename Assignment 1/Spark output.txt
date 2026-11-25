@@ -1,0 +1,33 @@
+ID   Name             Department  Semester  Marks
+101  Aarav Sharma     AI & DS            5   88.5
+102  Priya Patel      CSE                5   72.0
+103  Rohan Verma      AI & DS            5   94.0
+104  Sneha Nair       ECE                5   68.5
+105  Vikram Singh     CSE                5   81.0
+106  Ananya Iyer      AI & DS            5   76.5
+107  Karthik Raj      ECE                5   85.0
+108  Meera Krishnan   CSE                5   64.0
+109  Devansh Gupta    AI & DS            5   91.5
+110  Divya Menon      ECE                5   74.0
+
+Records checked before collect: 0
+Records checked after collect: 10
+Students above 75 (6): Aarav Sharma, Rohan Verma, Vikram Singh, Ananya Iyer, Karthik Raj, Devansh Gupta
+
+Students per department
+AI & DS: 4
+CSE: 3
+ECE: 3
+
+Average marks: 79.50
+Highest marks: Rohan Verma, ID 103, AI & DS, 94.0
+
+RDD lineage for students above 75
+(3) MapPartitionsRDD[2] at map at StudentPerformanceAnalysis.scala:52 []
+ |  MapPartitionsRDD[1] at filter at StudentPerformanceAnalysis.scala:49 []
+ |  ParallelCollectionRDD[0] at parallelize at StudentPerformanceAnalysis.scala:40 []
+
+RDD lineage for department counts
+(3) ShuffledRDD[4] at reduceByKey at StudentPerformanceAnalysis.scala:59 []
+ +-(3) MapPartitionsRDD[3] at map at StudentPerformanceAnalysis.scala:59 []
+    |  ParallelCollectionRDD[0] at parallelize at StudentPerformanceAnalysis.scala:40 []

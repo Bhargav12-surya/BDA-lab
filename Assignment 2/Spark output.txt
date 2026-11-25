@@ -1,0 +1,255 @@
+CSV preview
++--------------+--------------+----------------+--------------+-------------+----------+----------------+
+|transaction_id|product_name  |category        |store_location|quantity_sold|unit_price|transaction_date|
++--------------+--------------+----------------+--------------+-------------+----------+----------------+
+|T001          |Laptop        |Electronics     |Kochi         |1            |58500.00  |2026-09-01      |
+|T002          |Notebook      |Stationery      |Chennai       |25           |48.50     |2026-09-01      |
+|T003          |Office Chair  |Furniture       |Coimbatore    |2            |5000.00   |2026-09-02      |
+|T004          |Wireless Mouse|Electronics     |Bengaluru     |8            |650.00    |2026-09-02      |
+|T005          |Water Bottle  |Home and Kitchen|Kochi         |10           |325.50    |2026-09-03      |
++--------------+--------------+----------------+--------------+-------------+----------+----------------+
+only showing top 5 rows
+
+Rows with missing or invalid values
++--------------+--------------+----------------+--------------+-------------+----------+----------------+-------------------------------------------------------+
+|transaction_id|product_name  |category        |store_location|quantity_sold|unit_price|transaction_date|issue                                                  |
++--------------+--------------+----------------+--------------+-------------+----------+----------------+-------------------------------------------------------+
+|T025          |NULL          |Stationery      |Kochi         |2            |48.50     |2026-09-13      |missing product_name                                   |
+|T026          |Desk Lamp     |Home and Kitchen|Chennai       |-2           |950.00    |2026-09-13      |quantity must be a positive integer                    |
+|T027          |Wireless Mouse|Electronics     |Bengaluru     |4            |oops      |2026-09-14      |price must be a positive amount with up to two decimals|
+|T028          |Water Bottle  |Home and Kitchen|Coimbatore    |6            |325.50    |2026-09-31      |invalid ISO date                                       |
++--------------+--------------+----------------+--------------+-------------+----------+----------------+-------------------------------------------------------+
+
+
+Schema after conversion
+root
+ |-- transaction_id: string (nullable = true)
+ |-- product_name: string (nullable = true)
+ |-- category: string (nullable = true)
+ |-- store_location: string (nullable = true)
+ |-- quantity_sold: integer (nullable = true)
+ |-- unit_price: decimal(12,2) (nullable = true)
+ |-- transaction_date: date (nullable = true)
+ |-- total_sales: decimal(23,2) (nullable = true)
+
+Input rows: 28 | Valid rows: 24 | Excluded: 4
+
+Sales amount per valid transaction (INR)
++--------------+--------------+----------------+--------------+-------------+----------+----------------+-----------+
+|transaction_id|product_name  |category        |store_location|quantity_sold|unit_price|transaction_date|total_sales|
++--------------+--------------+----------------+--------------+-------------+----------+----------------+-----------+
+|T001          |Laptop        |Electronics     |Kochi         |1            |58500.00  |2026-09-01      |58500.00   |
+|T002          |Notebook      |Stationery      |Chennai       |25           |48.50     |2026-09-01      |1212.50    |
+|T003          |Office Chair  |Furniture       |Coimbatore    |2            |5000.00   |2026-09-02      |10000.00   |
+|T004          |Wireless Mouse|Electronics     |Bengaluru     |8            |650.00    |2026-09-02      |5200.00    |
+|T005          |Water Bottle  |Home and Kitchen|Kochi         |10           |325.50    |2026-09-03      |3255.00    |
+|T006          |Desk Lamp     |Home and Kitchen|Chennai       |4            |950.00    |2026-09-03      |3800.00    |
+|T007          |Backpack      |Accessories     |Bengaluru     |6            |1200.00   |2026-09-04      |7200.00    |
+|T008          |Notebook      |Stationery      |Coimbatore    |32           |48.50     |2026-09-04      |1552.00    |
+|T009          |Office Chair  |Furniture       |Kochi         |3            |5000.00   |2026-09-05      |15000.00   |
+|T010          |USB Cable     |Accessories     |Chennai       |18           |199.99    |2026-09-05      |3599.82    |
+|T011          |Monitor       |Electronics     |Bengaluru     |2            |11500.00  |2026-09-06      |23000.00   |
+|T012          |Water Bottle  |Home and Kitchen|Coimbatore    |14           |325.50    |2026-09-06      |4557.00    |
+|T013          |Wireless Mouse|Electronics     |Chennai       |12           |650.00    |2026-09-07      |7800.00    |
+|T014          |Desk          |Furniture       |Coimbatore    |2            |7500.00   |2026-09-07      |15000.00   |
+|T015          |USB Cable     |Accessories     |Kochi         |22           |199.99    |2026-09-08      |4399.78    |
+|T016          |Backpack      |Accessories     |Chennai       |9            |1200.00   |2026-09-08      |10800.00   |
+|T017          |Notebook      |Stationery      |Bengaluru     |30           |48.50     |2026-09-09      |1455.00    |
+|T018          |Desk Lamp     |Home and Kitchen|Kochi         |5            |950.00    |2026-09-09      |4750.00    |
+|T019          |Monitor       |Electronics     |Coimbatore    |1            |11500.00  |2026-09-10      |11500.00   |
+|T020          |Office Chair  |Furniture       |Bengaluru     |1            |4800.00   |2026-09-10      |4800.00    |
+|T021          |Water Bottle  |Home and Kitchen|Chennai       |8            |325.50    |2026-09-11      |2604.00    |
+|T022          |USB Cable     |Accessories     |Coimbatore    |12           |199.99    |2026-09-11      |2399.88    |
+|T023          |Desk          |Furniture       |Kochi         |1            |7500.00   |2026-09-12      |7500.00    |
+|T024          |Notebook      |Stationery      |Kochi         |15           |48.50     |2026-09-12      |727.50     |
++--------------+--------------+----------------+--------------+-------------+----------+----------------+-----------+
+
+
+Total revenue (INR)
++---------+
+|revenue  |
++---------+
+|210612.48|
++---------+
+
+
+Category jobs after groupBy and sum: 0
+Category jobs after collect: 2
+
+Revenue by category (INR)
+Category                 Revenue
+Electronics            106000.00
+Furniture               52300.00
+Accessories             28399.48
+Home and Kitchen        18966.00
+Stationery               4947.00
+
+Physical plan for category revenue
+== Physical Plan ==
+AdaptiveSparkPlan (19)
++- == Final Plan ==
+   ResultQueryStage (11)
+   +- * HashAggregate (10)
+      +- AQEShuffleRead (9), coalesced
+         +- ShuffleQueryStage (8), Statistics(sizeInBytes=320.0 B, rowCount=5)
+            +- Exchange (7)
+               +- * HashAggregate (6)
+                  +- * Project (5)
+                     +- * Filter (4)
+                        +- * Project (3)
+                           +- * Project (2)
+                              +- Scan csv  (1)
++- == Initial Plan ==
+   HashAggregate (18)
+   +- Exchange (17)
+      +- HashAggregate (16)
+         +- Project (15)
+            +- Filter (14)
+               +- Project (13)
+                  +- Project (12)
+                     +- Scan csv  (1)
+
+
+(1) Scan csv 
+Output [7]: [transaction_id#0, product_name#1, category#2, store_location#3, quantity_sold#4, unit_price#5, transaction_date#6]
+Batched: false
+Location: InMemoryFileIndex [file:Assignment 2/sales.csv]
+ReadSchema: struct<transaction_id:string,product_name:string,category:string,store_location:string,quantity_sold:string,unit_price:string,transaction_date:string>
+
+(2) Project [codegen id : 1]
+Output [9]: [transaction_id#0, product_name#1, category#2, store_location#3, unit_price#5, transaction_date#6, try_cast(quantity_sold#4 as int) AS qty#37, try_cast(unit_price#5 as decimal(12,2)) AS price#38, try_cast(transaction_date#6 as date) AS date#39]
+Input [7]: [transaction_id#0, product_name#1, category#2, store_location#3, quantity_sold#4, unit_price#5, transaction_date#6]
+
+(3) Project [codegen id : 1]
+Output [4]: [category#2, qty#37, price#38, concat_ws(, , CASE WHEN (length(trim(coalesce(transaction_id#0, ), None)) = 0) THEN missing transaction_id END, CASE WHEN (length(trim(coalesce(product_name#1, ), None)) = 0) THEN missing product_name END, CASE WHEN (length(trim(coalesce(category#2, ), None)) = 0) THEN missing category END, CASE WHEN (length(trim(coalesce(store_location#3, ), None)) = 0) THEN missing store_location END, CASE WHEN (isnull(qty#37) OR (qty#37 <= 0)) THEN quantity must be a positive integer END, CASE WHEN ((isnull(price#38) OR (price#38 <= 0.00)) OR NOT RLIKE(unit_price#5, ^[0-9]+([.][0-9]{1,2})?$)) THEN price must be a positive amount with up to two decimals END, CASE WHEN (isnull(date#39) OR NOT RLIKE(transaction_date#6, ^[0-9]{4}-[0-9]{2}-[0-9]{2}$)) THEN invalid ISO date END) AS issue#40]
+Input [9]: [transaction_id#0, product_name#1, category#2, store_location#3, unit_price#5, transaction_date#6, qty#37, price#38, date#39]
+
+(4) Filter [codegen id : 1]
+Input [4]: [category#2, qty#37, price#38, issue#40]
+Condition : (issue#40 = )
+
+(5) Project [codegen id : 1]
+Output [2]: [category#2, (cast(qty#37 as decimal(10,0)) * price#38) AS total_sales#76]
+Input [4]: [category#2, qty#37, price#38, issue#40]
+
+(6) HashAggregate [codegen id : 1]
+Input [2]: [category#2, total_sales#76]
+Keys [1]: [category#2]
+Functions [1]: [partial_sum(total_sales#76)]
+Aggregate Attributes [2]: [sum#178, isEmpty#179]
+Results [3]: [category#2, sum#180, isEmpty#181]
+
+(7) Exchange
+Input [3]: [category#2, sum#180, isEmpty#181]
+Arguments: hashpartitioning(category#2, 2), ENSURE_REQUIREMENTS, [plan_id=273]
+
+(8) ShuffleQueryStage
+Output [3]: [category#2, sum#180, isEmpty#181]
+Arguments: 0
+
+(9) AQEShuffleRead
+Input [3]: [category#2, sum#180, isEmpty#181]
+Arguments: coalesced
+
+(10) HashAggregate [codegen id : 2]
+Input [3]: [category#2, sum#180, isEmpty#181]
+Keys [1]: [category#2]
+Functions [1]: [sum(total_sales#76)]
+Aggregate Attributes [1]: [sum(total_sales#76)#177]
+Results [2]: [category#2, sum(total_sales#76)#177 AS revenue#168]
+
+(11) ResultQueryStage
+Output [2]: [category#2, revenue#168]
+Arguments: 1
+
+(12) Project
+Output [9]: [transaction_id#0, product_name#1, category#2, store_location#3, unit_price#5, transaction_date#6, try_cast(quantity_sold#4 as int) AS qty#37, try_cast(unit_price#5 as decimal(12,2)) AS price#38, try_cast(transaction_date#6 as date) AS date#39]
+Input [7]: [transaction_id#0, product_name#1, category#2, store_location#3, quantity_sold#4, unit_price#5, transaction_date#6]
+
+(13) Project
+Output [4]: [category#2, qty#37, price#38, concat_ws(, , CASE WHEN (length(trim(coalesce(transaction_id#0, ), None)) = 0) THEN missing transaction_id END, CASE WHEN (length(trim(coalesce(product_name#1, ), None)) = 0) THEN missing product_name END, CASE WHEN (length(trim(coalesce(category#2, ), None)) = 0) THEN missing category END, CASE WHEN (length(trim(coalesce(store_location#3, ), None)) = 0) THEN missing store_location END, CASE WHEN (isnull(qty#37) OR (qty#37 <= 0)) THEN quantity must be a positive integer END, CASE WHEN ((isnull(price#38) OR (price#38 <= 0.00)) OR NOT RLIKE(unit_price#5, ^[0-9]+([.][0-9]{1,2})?$)) THEN price must be a positive amount with up to two decimals END, CASE WHEN (isnull(date#39) OR NOT RLIKE(transaction_date#6, ^[0-9]{4}-[0-9]{2}-[0-9]{2}$)) THEN invalid ISO date END) AS issue#40]
+Input [9]: [transaction_id#0, product_name#1, category#2, store_location#3, unit_price#5, transaction_date#6, qty#37, price#38, date#39]
+
+(14) Filter
+Input [4]: [category#2, qty#37, price#38, issue#40]
+Condition : (issue#40 = )
+
+(15) Project
+Output [2]: [category#2, (cast(qty#37 as decimal(10,0)) * price#38) AS total_sales#76]
+Input [4]: [category#2, qty#37, price#38, issue#40]
+
+(16) HashAggregate
+Input [2]: [category#2, total_sales#76]
+Keys [1]: [category#2]
+Functions [1]: [partial_sum(total_sales#76)]
+Aggregate Attributes [2]: [sum#178, isEmpty#179]
+Results [3]: [category#2, sum#180, isEmpty#181]
+
+(17) Exchange
+Input [3]: [category#2, sum#180, isEmpty#181]
+Arguments: hashpartitioning(category#2, 2), ENSURE_REQUIREMENTS, [plan_id=249]
+
+(18) HashAggregate
+Input [3]: [category#2, sum#180, isEmpty#181]
+Keys [1]: [category#2]
+Functions [1]: [sum(total_sales#76)]
+Aggregate Attributes [1]: [sum(total_sales#76)#177]
+Results [2]: [category#2, sum(total_sales#76)#177 AS revenue#168]
+
+(19) AdaptiveSparkPlan
+Output [2]: [category#2, revenue#168]
+Arguments: isFinalPlan=true
+
+
+
+Top five products by units sold
++--------------+----------+
+|product_name  |units_sold|
++--------------+----------+
+|Notebook      |102       |
+|USB Cable     |52        |
+|Water Bottle  |32        |
+|Wireless Mouse|20        |
+|Backpack      |15        |
++--------------+----------+
+
+
+Revenue by store location (INR)
++--------------+--------+
+|store_location|revenue |
++--------------+--------+
+|Kochi         |94132.28|
+|Coimbatore    |45008.88|
+|Bengaluru     |41655.00|
+|Chennai       |29816.32|
++--------------+--------+
+
+
+Transactions strictly above INR 10,000
++--------------+------------+-----------+--------------+-------------+----------+----------------+-----------+
+|transaction_id|product_name|category   |store_location|quantity_sold|unit_price|transaction_date|total_sales|
++--------------+------------+-----------+--------------+-------------+----------+----------------+-----------+
+|T001          |Laptop      |Electronics|Kochi         |1            |58500.00  |2026-09-01      |58500.00   |
+|T011          |Monitor     |Electronics|Bengaluru     |2            |11500.00  |2026-09-06      |23000.00   |
+|T009          |Office Chair|Furniture  |Kochi         |3            |5000.00   |2026-09-05      |15000.00   |
+|T014          |Desk        |Furniture  |Coimbatore    |2            |7500.00   |2026-09-07      |15000.00   |
+|T019          |Monitor     |Electronics|Coimbatore    |1            |11500.00  |2026-09-10      |11500.00   |
+|T016          |Backpack    |Accessories|Chennai       |9            |1200.00   |2026-09-08      |10800.00   |
++--------------+------------+-----------+--------------+-------------+----------+----------------+-----------+
+
+
+Category totals using an RDD
+Accessories             28399.48
+Electronics            106000.00
+Furniture               52300.00
+Home and Kitchen        18966.00
+Stationery               4947.00
+RDD and DataFrame totals match: true
+(1) Revenue by category using reduceByKey ShuffledRDD[70] at reduceByKey at SalesAnalysis.scala:106 []
+ +-(1) MapPartitionsRDD[69] at map at SalesAnalysis.scala:105 []
+    |  MapPartitionsRDD[68] at rdd at SalesAnalysis.scala:104 []
+    |  SQLExecutionRDD[67] at rdd at SalesAnalysis.scala:104 []
+    |  MapPartitionsRDD[66] at rdd at SalesAnalysis.scala:104 []
+    |  MapPartitionsRDD[65] at rdd at SalesAnalysis.scala:104 []
+    |  MapPartitionsRDD[64] at rdd at SalesAnalysis.scala:104 []
+    |  FileScanRDD[63] at rdd at SalesAnalysis.scala:104 []
